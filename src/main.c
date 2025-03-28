@@ -1,16 +1,18 @@
 #include "raylib.h"
 #include "../include/snake.h"
 
+#define GRID_SIZE 16
+
 const int controls[] = { KEY_D, KEY_A, KEY_S, KEY_W, KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP };
 
-void handleInput(Snake* snake) {
+unsigned short int handleInput(Snake* snake) {
 
     for (unsigned short int i = 0; i < 8; i++) {
         if (IsKeyPressed(controls[i])) {
-            snake->direction = i % 4;
+            return i % 4;
         }
     }
-
+    return snake->direction;
 }
 
 int main() {
@@ -21,13 +23,15 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Test Window");
 
 
-    Snake snake = { {0, 0}, {20, 20}, 0 };
+    Snake snake = { {0, 0}, {0, 0}, {GRID_SIZE, GRID_SIZE}, 0 };
 
-    SetTargetFPS(30);
+    SetTargetFPS(5);
 	while (!WindowShouldClose()) {
-        handleInput(&snake);
+        unsigned short int nDir = handleInput(&snake);
+        setSnakeDirection(&snake, nDir);
 
-        moveSnake(&snake, 5);
+        moveSnake(&snake, GRID_SIZE);
+        addTail(&snake);
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
