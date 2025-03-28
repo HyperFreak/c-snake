@@ -8,7 +8,7 @@ void renderSnake(Snake* snake) {
     DrawRectangleV(snake->position, snake->size, (Color){ 0, 82, 172, 255 });
     Tail* tail = snake->tail;
     while (tail != NULL) {
-        DrawRectangleV(tail->position, tail->size, (Color){ 0, 62, 152, 225});
+        DrawRectangleV(tail->position, tail->size, (Color){ 0, 62, 152, 255});
         tail = tail->next;
     }
 }
