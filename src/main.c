@@ -42,11 +42,6 @@ void setToRandomPosition(Vector2* posVec) {
 
 int main() {
     srand(time(NULL));
-
-    // for (int i = 0; i < 100; i++) {
-    //     int a = (FIELD_X + randomUpTo(TILES_X) * GRID_SIZE);
-    //     printf("%d", a);
-    // }
 	
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Test Window");
 
@@ -65,7 +60,7 @@ int main() {
 
     SetTargetFPS(60);
     unsigned short int movementTimer = 0;
-    const unsigned short int movementTime = 12; // 60 / 12 = 5 steps per second
+    const unsigned short int movementTime = 6;
     unsigned short int direction = 0;
 	while (!WindowShouldClose()) {
         direction = handleInput(direction);
