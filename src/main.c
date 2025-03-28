@@ -1,3 +1,8 @@
+#include <time.h>
+#include <stdlib.h>
+
+#include <stdio.h>
+
 #include "raylib.h"
 #include "../include/snake.h"
 
@@ -6,6 +11,9 @@
 #define TILES_Y 32
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 700
+
+#define FIELD_X WINDOW_WIDTH / 2 - (TILES_X * GRID_SIZE) / 2
+#define FIELD_Y WINDOW_HEIGHT / 2 - (TILES_Y * GRID_SIZE) / 2
 
 const int controls[] = { KEY_D, KEY_A, KEY_S, KEY_W, KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP };
 
@@ -19,7 +27,26 @@ unsigned short int handleInput(unsigned short int current) {
     return current;
 }
 
+unsigned short int randomUpTo(unsigned short int max) {
+    return rand() % max;
+}
+
+bool samePosition(Vector2 a, Vector2 b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+void setToRandomPosition(Vector2* posVec) {
+    posVec->x = FIELD_X + (randomUpTo(TILES_X) * GRID_SIZE);
+    posVec->y = FIELD_Y + (randomUpTo(TILES_Y) * GRID_SIZE);
+}
+
 int main() {
+    srand(time(NULL));
+
+    // for (int i = 0; i < 100; i++) {
+    //     int a = (FIELD_X + randomUpTo(TILES_X) * GRID_SIZE);
+    //     printf("%d", a);
+    // }
 	
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Test Window");
 
@@ -29,6 +56,7 @@ int main() {
     Vector2 fieldSize = { fieldWidth, fieldHeight };
     Vector2 fieldPos = { WINDOW_WIDTH / 2 - (fieldWidth / 2), WINDOW_HEIGHT / 2 - (fieldHeight / 2) };
     Vector2 fruitPos = { 0, 0 };
+    setToRandomPosition(&fruitPos);
 
     Snake snake = { {WINDOW_WIDTH / 2 - GRID_SIZE, WINDOW_HEIGHT / 2 - GRID_SIZE}, {0, 0}, {GRID_SIZE, GRID_SIZE}, 0 };
     snake.lastPos = snake.position;
@@ -46,16 +74,22 @@ int main() {
         if (movementTimer >= movementTime) {
             movementTimer = 0;
             setSnakeDirection(&snake, direction);
-            moveSnake(&snake, GRID_SIZE);    
+            moveSnake(&snake, GRID_SIZE);
+
+            if (samePosition(snake.position, fruitPos)) {
+                score++;
+                setToRandomPosition(&fruitPos);
+                addTail(&snake);
+            }
         }
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
         DrawRectangleV(fieldPos, fieldSize, BLACK);
 
-        DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE, GRID_SIZE }, (Color){ 255, 0, 0, 255 });
         renderSnake(&snake);
-		EndDrawing();
+        DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE, GRID_SIZE }, (Color){ 255, 0, 0, 255 });
+        EndDrawing();
 	}
 
 	CloseWindow();
