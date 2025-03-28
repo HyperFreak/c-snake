@@ -8,8 +8,6 @@ void renderSnake(Snake* snake) {
     DrawRectangleV(snake->position, snake->size, (Color){ 0, 82, 172, 255 });
     Tail* tail = snake->tail;
     while (tail != NULL) {
-        printf("draw tail %s\n", tail);
-        printf("%d\n", snake->tailSize);
         DrawRectangleV(tail->position, tail->size, (Color){ 0, 62, 152, 225});
         tail = tail->next;
     }
@@ -50,7 +48,6 @@ void setSnakeDirection(Snake* snake, short int dir) {
 }
 
 void addTail(Snake* snake) {
-    printf("add Tail\n");
     if (snake == NULL) return;
 
     Tail* nTail = (Tail*)malloc(sizeof(Tail));
