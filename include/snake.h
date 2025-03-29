@@ -32,6 +32,12 @@ void setSnakeDirection(Snake* snake, short int dir);
 
 void addTail(Snake* snake);
 
+bool collidesWithTail(Snake* snake);
+
+bool collidesWithWall(Snake* snake, unsigned int wallLeft, unsigned int wallRight, unsigned int wallTop, unsigned int wallBottom);
+
+void resetToLastPosition(Snake* snake);
+
 void deleteSnakeTail(Snake* snake);
 
 #endif

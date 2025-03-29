@@ -66,10 +66,42 @@ void addTail(Snake* snake) {
         nTail->position = prevTal->lastPos;
         prevTal->next = nTail;
     }
+    nTail->lastPos = nTail->position;
     snake->tailEnd = nTail;
     snake->tailSize++;
 }
 
+bool collidesWithTail(Snake* snake) {
+    if (snake == NULL) return false;
+    if (snake->tail == NULL) return false;
+
+    Tail* current = snake->tail;
+    while (current != NULL) {
+        bool samePos = snake->position.x == current->position.x 
+                        && snake->position.y == current->position.y;
+        if (samePos) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+
+bool collidesWithWall(Snake* snake, unsigned int wallLeft, unsigned int wallRight, unsigned int wallTop, unsigned int wallBottom) {
+    return (snake->position.x < wallLeft || snake->position.x > wallRight || snake->position.y < wallTop || snake->position.y > wallBottom);
+}
+
+void resetToLastPosition(Snake* snake) {
+    snake->position.x = snake->lastPos.x;
+    snake->position.y = snake->lastPos.y;
+
+    Tail* current = snake->tail;
+    while (current != NULL) {
+        current->position.x = current->lastPos.x;
+        current->position.y = current->lastPos.y;
+        current = current->next;
+    }
+}
 
 void deleteSnakeTail(Snake* snake) {
     if (snake == NULL) return;

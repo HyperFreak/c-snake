@@ -44,12 +44,19 @@ int gameLoop(Snake* snake, Vector2* fruitPos, unsigned short int* directionInput
     setSnakeDirection(snake, *directionInput);
     moveSnake(snake, GRID_SIZE);
 
+    if (collidesWithTail(snake) || collidesWithWall(snake, FIELD_X, FIELD_X + GRID_SIZE * TILES_X, FIELD_Y, FIELD_Y + GRID_SIZE * TILES_Y)) {
+        printf("GAME OVER\n");
+        resetToLastPosition(snake);
+        return -1;
+    }
+
     if (samePosition(snake->position, *fruitPos)) {
         score++;
         setToRandomPosition(fruitPos);
         addTail(snake);
+        return 1;
     }
-    return score;
+    return 0;
 }
 
 void drawFieldTiles() {
@@ -84,13 +91,25 @@ int main() {
     unsigned short int movementTimer = 0;
     const unsigned short int movementTime = 6;
     unsigned short int direction = 0;
+
+    bool gameOver = false;
+
     while (!WindowShouldClose()) {
         direction = handleInput(direction);
 
-        movementTimer++;
-        if (movementTimer >= movementTime) {
-            movementTimer = 0;
-            score = gameLoop(&snake, &fruitPos, &direction, score);
+        if (!gameOver) {
+            movementTimer++;
+            if (movementTimer >= movementTime) {
+                movementTimer = 0;
+                switch(gameLoop(&snake, &fruitPos, &direction, score)) {
+                    case 1:
+                        score++;
+                        break;
+                    case -1:
+                        gameOver = true;
+                        break;
+                }
+            }
         }
 
         BeginDrawing();
