@@ -65,7 +65,7 @@ void drawFieldTiles() {
 int main() {
     srand(time(NULL));
 	
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Test Window");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Snake");
 
     unsigned short int score = 0;
     const unsigned short int fieldWidth = TILES_X * GRID_SIZE;
