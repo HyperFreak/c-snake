@@ -84,7 +84,7 @@ int main() {
     unsigned short int movementTimer = 0;
     const unsigned short int movementTime = 6;
     unsigned short int direction = 0;
-	while (!WindowShouldClose()) {
+    while (!WindowShouldClose()) {
         direction = handleInput(direction);
 
         movementTimer++;
@@ -93,8 +93,8 @@ int main() {
             score = gameLoop(&snake, &fruitPos, &direction, score);
         }
 
-		BeginDrawing();
-		ClearBackground(RAYWHITE);
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
 
         DrawText(TextFormat("Score: %d", score), FIELD_X, FIELD_Y - 42, 32, BLACK);
 
@@ -105,9 +105,9 @@ int main() {
         renderSnake(&snake);
         DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE - 2, GRID_SIZE - 2 }, (Color){ 255, 0, 0, 255 });
         EndDrawing();
-	}
+    }
 
-	CloseWindow();
+    CloseWindow();
 
-	return 0;
+    return 0;
 }
