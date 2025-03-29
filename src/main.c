@@ -123,6 +123,32 @@ int main() {
 
         renderSnake(&snake);
         DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE - 2, GRID_SIZE - 2 }, (Color){ 255, 0, 0, 255 });
+
+        if (gameOver) {
+            const char* restartText = "Press Enter to restart";
+            const char* gameOverText = "Game Over";
+            const char* finalScore = TextFormat("Final Score: %d", score);
+            DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, (Color){ 0, 0, 0, 120 });
+            int gOWidth = MeasureText(gameOverText, 72);
+            int scoreWidth = MeasureText(finalScore, 32);
+            int restartWidth = MeasureText(restartText, 32);
+            DrawText(gameOverText, WINDOW_WIDTH / 2 - gOWidth / 2, WINDOW_HEIGHT / 2 - 100, 72, WHITE);
+            DrawText(finalScore, WINDOW_WIDTH / 2 - scoreWidth / 2, WINDOW_HEIGHT / 2 - 16, 32, WHITE);
+            DrawText(restartText, WINDOW_WIDTH / 2 - restartWidth / 2, WINDOW_HEIGHT / 2 + 256, 32, WHITE);
+            if (IsKeyPressed(KEY_ENTER)) {
+                score = 0;
+                deleteSnakeTail(&snake);
+                snake.position.x = WINDOW_WIDTH / 2 - GRID_SIZE + 1;
+                snake.position.y = WINDOW_HEIGHT / 2 - GRID_SIZE + 1;
+                snake.lastPos = snake.position;
+                snake.lastPos.x -= GRID_SIZE;
+                snake.direction = 0;
+                direction = 0;
+                addTail(&snake);
+                gameOver = false;
+            }
+        }
+
         EndDrawing();
     }
 
