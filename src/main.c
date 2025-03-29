@@ -6,9 +6,9 @@
 #include "raylib.h"
 #include "../include/snake.h"
 
-#define GRID_SIZE 16
-#define TILES_X 60
-#define TILES_Y 32
+#define GRID_SIZE 20
+#define TILES_X 30
+#define TILES_Y 30
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 700
 
@@ -36,8 +36,30 @@ bool samePosition(Vector2 a, Vector2 b) {
 }
 
 void setToRandomPosition(Vector2* posVec) {
-    posVec->x = FIELD_X + (randomUpTo(TILES_X) * GRID_SIZE);
-    posVec->y = FIELD_Y + (randomUpTo(TILES_Y) * GRID_SIZE);
+    posVec->x = FIELD_X + (randomUpTo(TILES_X) * GRID_SIZE) + 1;
+    posVec->y = FIELD_Y + (randomUpTo(TILES_Y) * GRID_SIZE) + 1;
+}
+
+int gameLoop(Snake* snake, Vector2* fruitPos, unsigned short int* directionInput, unsigned short int score) {
+    setSnakeDirection(snake, *directionInput);
+    moveSnake(snake, GRID_SIZE);
+
+    if (samePosition(snake->position, *fruitPos)) {
+        score++;
+        setToRandomPosition(fruitPos);
+        addTail(snake);
+    }
+    return score;
+}
+
+void drawFieldTiles() {
+    unsigned int fieldX = FIELD_X;
+    unsigned int fieldY = FIELD_Y;
+    for (unsigned short int i = 0; i < TILES_X; i++) {
+        for (unsigned short int j = 0; j < TILES_Y; j++) {
+            DrawRectangle(1 + fieldX + i * GRID_SIZE, 1 + fieldY + j * GRID_SIZE, GRID_SIZE - 2, GRID_SIZE - 2, GRAY);
+        }
+    }
 }
 
 int main() {
@@ -53,7 +75,7 @@ int main() {
     Vector2 fruitPos = { 0, 0 };
     setToRandomPosition(&fruitPos);
 
-    Snake snake = { {WINDOW_WIDTH / 2 - GRID_SIZE, WINDOW_HEIGHT / 2 - GRID_SIZE}, {0, 0}, {GRID_SIZE, GRID_SIZE}, 0 };
+    Snake snake = { {WINDOW_WIDTH / 2 - GRID_SIZE + 1, WINDOW_HEIGHT / 2 - GRID_SIZE + 1}, {0, 0}, {GRID_SIZE-2, GRID_SIZE-2}, 0 };
     snake.lastPos = snake.position;
     snake.lastPos.x -= GRID_SIZE;
     addTail(&snake);
@@ -68,22 +90,20 @@ int main() {
         movementTimer++;
         if (movementTimer >= movementTime) {
             movementTimer = 0;
-            setSnakeDirection(&snake, direction);
-            moveSnake(&snake, GRID_SIZE);
-
-            if (samePosition(snake.position, fruitPos)) {
-                score++;
-                setToRandomPosition(&fruitPos);
-                addTail(&snake);
-            }
+            score = gameLoop(&snake, &fruitPos, &direction, score);
         }
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-        DrawRectangleV(fieldPos, fieldSize, BLACK);
+
+        DrawText(TextFormat("Score: %d", score), FIELD_X, FIELD_Y - 42, 32, BLACK);
+
+        DrawRectangleV(fieldPos, fieldSize, DARKGRAY);
+
+        drawFieldTiles();
 
         renderSnake(&snake);
-        DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE, GRID_SIZE }, (Color){ 255, 0, 0, 255 });
+        DrawRectangleV(fruitPos, (Vector2){ GRID_SIZE - 2, GRID_SIZE - 2 }, (Color){ 255, 0, 0, 255 });
         EndDrawing();
 	}
 
