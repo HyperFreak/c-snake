@@ -21,6 +21,7 @@ struct Tail {
     Vector2 lastPos;
     Vector2 size;
     Snake* head;
+    Tail* prev;
     Tail* next;
 };
 

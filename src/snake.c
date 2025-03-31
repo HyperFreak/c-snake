@@ -25,18 +25,30 @@ void moveSnake(Snake* snake, short int step) {
         snake->position.x += subDir * step;
     }
 
-    Tail* tail = snake->tail;                                                                               // iterate through all tail segments
-    Tail* next;                                                                                             //  and set their position to their previous segments
-    if (tail != NULL) {                                                                                     //  last position
-        tail->lastPos = tail->position;
-        tail->position = snake->lastPos;
-        while (tail->next != NULL) {
-            next = tail->next;
-            next->lastPos = next->position;
-            next->position = tail->lastPos;
-            tail = next;
-        }
+    if (snake->tail == NULL || snake->tailEnd == NULL) {                                                    // check if a tail exists
+        return;
     }
+    Tail* last = snake->tailEnd;
+    Tail* first = snake->tail;
+
+    if (last == first) {                                                                                    // if tailsize is 1, just update it's position
+        first->lastPos = first->position;
+        first->position = snake->lastPos;
+        return;
+    }
+    Tail* nLast = last->prev;                                                                               // update lastPos of second last to be current pos of last
+    nLast->lastPos = last->position;
+
+    last->position = snake->lastPos;                                                                        // update last segments position to become the first segment
+    
+    first->prev = last;                                                                                     // put the last segment at the beginning of the list
+    last->next = first;
+    
+    nLast->next = NULL;                                                                                     // remove circular list by removing references to last being 
+    last->prev = NULL;                                                                                      //  the last
+    
+    snake->tailEnd = nLast;                                                                                 // update values in snake
+    snake->tail = last;
 }
 
 void setSnakeDirection(Snake* snake, short int dir) {
@@ -63,9 +75,10 @@ void addTail(Snake* snake) {
         nTail->position = snake->lastPos;                                                                   //  attach to the snake directly
         snake->tail = nTail;
     } else {
-        Tail* prevTal = snake->tailEnd;                                                                     // else, attach to the last tail segment
-        nTail->position = prevTal->lastPos;
-        prevTal->next = nTail;
+        Tail* prevTail = snake->tailEnd;                                                                     // else, attach to the last tail segment
+        nTail->position = prevTail->lastPos;
+        prevTail->next = nTail;
+        nTail->prev = prevTail;
     }
     nTail->lastPos = nTail->position;
     snake->tailEnd = nTail;                                                                                 // update snakes values
